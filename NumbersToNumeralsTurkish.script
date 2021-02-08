@@ -1,0 +1,53 @@
+# This script constructs a transducer that relates the
+# Turkish numerals "bir", "iki", ..., "dokuz-bin-dokuz-yüz-doksan-dokuz",
+# to the corresponding numbers "1", 2 ... "9999".
+
+define TwoToNine [2:{iki} | 3:{üç} | 4:{dört} |5:{beş} | 
+				6:{altı} | 7:{yedi} | 8:{sekiz} | 9:{dokuz}];
+
+
+define OneToNine [1:{bir} | TwoToNine];
+
+
+define TenToNinety [1:{on} | 2:{yirmi} | 3:{otuz} | 4:{kırk} | 5:{elli} | 
+					6:{altmış} | 7:{yetmiş} | 8:{seksen} | 9:{doksan}];
+
+
+define Tens [TenToNinety [{0}:0 | 0 :{-} OneToNine]];
+
+
+define OneHundred [1:0 [{00}:{yüz} | {0}:{yüz-} OneToNine | 0:{yüz-} Tens]];
+
+
+define OtherHundreds [TwoToNine [{00}:{-yüz} | {0}:{-yüz-} OneToNine | 0:{-yüz-} Tens]];
+
+define Hundreds [OneHundred | OtherHundreds];
+
+
+define OneThousand [1:0 [{000}:{bin} | {00}:{bin-} OneToNine | 
+					{0}:{bin-} Tens | 0:{bin-} OneHundreds]];
+
+
+define OtherThousands [TwoToNine [{000}:{-bin} | {00}:{-bin-} OneToNine | 
+						{0}:{-bin-} Tens | 0:{-bin-} OtherHundreds]];
+
+
+define Thousands [OneThousand | OtherThousands];
+
+
+define OneToThousands [ OneToNine | Tens | Hundreds | Thousands];
+
+
+push OneToThousands
+
+echo
+echo Print random numbers
+print random-upper 10
+echo
+echo Print random numerals
+print random-lower 10
+echo
+
+
+
+
